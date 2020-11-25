@@ -45,3 +45,19 @@
 example_iris_data:
   type: pandas.CSVDataSet
   filepath: data/01_raw/iris.csv
+
+stock_train:
+  type: api.APIDataSet
+  url: https://raw.githubusercontent.com/thundercomb/pytorch-stock-predictor-rnn/master/Google_Stock_Price_Train.csv
+
+stock_test:
+  type: api.APIDataSet
+  url: https://raw.githubusercontent.com/thundercomb/pytorch-stock-predictor-rnn/master/Google_Stock_Price_Test.csv
+
+trainset:
+  type: pandas.CSVDataSet
+  filepath: data/01_raw/trainset.csv
+
+testset:
+  type: pandas.CSVDataSet
+  filepath: data/01_raw/testset.csv
