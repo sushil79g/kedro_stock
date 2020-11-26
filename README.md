@@ -2,18 +2,7 @@
 
 ## Overview
 
-This is your new Kedro project, which was generated using `Kedro 0.16.6`.
-
-Take a look at the [Kedro documentation](https://kedro.readthedocs.io) to get started.
-
-## Rules and guidelines
-
-In order to get the best out of the template:
-
-* Don't remove any lines from the `.gitignore` file we provide
-* Make sure your results can be reproduced by following a [data engineering convention](https://kedro.readthedocs.io/en/stable/11_faq/01_faq.html#what-is-data-engineering-convention)
-* Don't commit data to your repository
-* Don't commit any credentials or your local configuration to your repository. Keep all your credentials and local configuration in `conf/local/`
+Testing kedro framwork with mlflow. project is focus on leaning the workflow of the kedro more than building more accurate model.
 
 ## How to install dependencies
 
