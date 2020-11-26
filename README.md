@@ -2,7 +2,7 @@
 
 ## Overview
 
-Testing kedro framwork with mlflow. project is focus on leaning the workflow of the kedro more than building more accurate model.
+Testing kedro framwork with mlflow. project is focus on learning the workflow of the kedro more than building more accurate model.
 
 ## How to install dependencies
 

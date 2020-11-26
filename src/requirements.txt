@@ -104,7 +104,7 @@ webencodings==0.5.1       # via bleach
 wheel==0.32.2             # via -r /mnt/c/Users/dell/Documents/project/linux_project/stock/kedro_stock/src/requirements.in
 whichcraft==0.6.1         # via cookiecutter
 widgetsnbextension==3.5.1  # via ipywidgets
-
+torch==1.7.0
 # The following packages are considered to be unsafe in a requirements file:
 # pip
 # setuptools
