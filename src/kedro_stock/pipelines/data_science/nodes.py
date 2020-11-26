@@ -37,7 +37,25 @@ import logging
 from typing import Any, Dict
 
 import numpy as np
+from numpy.core.fromnumeric import reshape
 import pandas as pd
+from pandas.io import feather_format
+
+from sklearn.preprocessing import MinMaxScaler
+
+def pre_process(training_df, parameters):
+    sc = MinMaxScaler(feather_format = (0,1))
+    scaled_training = sc.fit_transform(training_df)
+    x_train, y_train = [], []
+
+    for i in range(parameters['INPUT_SIZE'], 1258):
+        x_train.append(scaled_training[i-parameters['INPUT_SIZE']:i, 0])
+        y_train.append(scaled_training[i,0])
+    x_train, y_train = np.array(x_train), np.array(y_train)
+    x_train = np.reshape(x_train, (x_train.shape[0], 1, x_train.shape[1]))
+
+    return x_train, y_train
+
 
 
 def train_model(
@@ -48,31 +66,7 @@ def train_model(
     conf/project/parameters.yml. All of the data as well as the parameters
     will be provided to this function at the time of execution.
     """
-    num_iter = parameters["example_num_train_iter"]
-    lr = parameters["example_learning_rate"]
-    X = train_x.to_numpy()
-    Y = train_y.to_numpy()
-
-    # Add bias to the features
-    bias = np.ones((X.shape[0], 1))
-    X = np.concatenate((bias, X), axis=1)
-
-    weights = []
-    # Train one model for each class in Y
-    for k in range(Y.shape[1]):
-        # Initialise weights
-        theta = np.zeros(X.shape[1])
-        y = Y[:, k]
-        for _ in range(num_iter):
-            z = np.dot(X, theta)
-            h = _sigmoid(z)
-            gradient = np.dot(X.T, (h - y)) / y.size
-            theta -= lr * gradient
-        # Save the weights for each model
-        weights.append(theta)
-
-    # Return a joint multi-class model with weights for all classes
-    return np.vstack(weights).transpose()
+    
 
 
 def predict(model: np.ndarray, test_x: pd.DataFrame) -> np.ndarray:

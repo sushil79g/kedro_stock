@@ -43,5 +43,11 @@ def build_csv(data):
 def split_data(traindata, testdata, split_ratio):
     train_df = build_csv(traindata)
     test_df = build_csv(testdata)
-    import pdb; pdb.set_trace()
-    print(train_df.head())
+    training_set = train_df.iloc[:, 1:2].values
+    testing_set = test_df.iloc[:, 1:2].values
+    dataset_total =  pd.concat((train_df['Open'], test_df['Open']), axis=0)
+
+    return dict(train_df = train_df,
+                test_df = test_df,
+                dataset_total = dataset_total
+    )

@@ -44,10 +44,9 @@ def create_pipeline(**kwargs):
                 split_data,
                 ["stock_train", "stock_test","params:test_data_ratio"],
                 dict(
-                    train_x="train_x",
-                    train_y="train_y",
-                    test_x="test_x",
-                    test_y="test_y",
+                   train_df = "train_df",
+                   test_df = "test_df",
+                   dataset_total = "dataset_total"
                 ),
             )
         ]
