@@ -7,20 +7,20 @@ class RNN(nn.Module):
         super(RNN, self).__init__()
 
         self.rnn = nn.LSTM(
-            input_size = i_size,
-            hidden_size = h_size,
-            num_layers = n_layers
+            input_size=i_size,
+            hidden_size=h_size,
+            num_layers=n_layers
         )
-
         self.out = nn.Linear(h_size, o_size)
-    
+
     def forward(self, x, h_state):
         r_out, hidden_state = self.rnn(x, h_state)
+        
         hidden_size = hidden_state[-1].size(-1)
         r_out = r_out.view(-1, hidden_size)
         outs = self.out(r_out)
 
-        return outs, hidden_size
+        return outs, hidden_state
 
 def train_mlmodel(x_train, y_train, parameters):
     rnn = RNN(parameters['INPUT_SIZE'], parameters["HIDDEN_SIZE"], parameters['NUM_LAYERS'], parameters['OUTPUT_SIZE'])
@@ -34,6 +34,7 @@ def train_mlmodel(x_train, y_train, parameters):
         output, hidden_state = rnn(inputs, hidden_state)
         loss = criterion(output.view(-1), labels)
         optimizer.zero_grad()
+        # torch.autograd.set_detect_anomaly(True)
         loss.backward(retain_graph=True)
         optimizer.step()
 
