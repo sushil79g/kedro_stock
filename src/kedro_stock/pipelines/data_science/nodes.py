@@ -43,17 +43,20 @@ from pandas.io import feather_format
 
 from sklearn.preprocessing import MinMaxScaler
 
+from .model import train_mlmodel
+
 def pre_process(training_df, parameters):
-    sc = MinMaxScaler(feather_format = (0,1))
+    sc = MinMaxScaler(feature_range = (0,1))
     scaled_training = sc.fit_transform(training_df)
     x_train, y_train = [], []
 
     for i in range(parameters['INPUT_SIZE'], 1258):
+        # import pdb; pdb.set_trace()
         x_train.append(scaled_training[i-parameters['INPUT_SIZE']:i, 0])
         y_train.append(scaled_training[i,0])
     x_train, y_train = np.array(x_train), np.array(y_train)
     x_train = np.reshape(x_train, (x_train.shape[0], 1, x_train.shape[1]))
-
+    
     return x_train, y_train
 
 
@@ -66,6 +69,9 @@ def train_model(
     conf/project/parameters.yml. All of the data as well as the parameters
     will be provided to this function at the time of execution.
     """
+    x_train, y_train = pre_process(training_df=train_x, parameters=parameters)
+    train_mlmodel(x_train, y_train, parameters)
+    
     
 
 

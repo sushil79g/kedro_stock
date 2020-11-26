@@ -47,7 +47,7 @@ def split_data(traindata, testdata, split_ratio):
     testing_set = test_df.iloc[:, 1:2].values
     dataset_total =  pd.concat((train_df['Open'], test_df['Open']), axis=0)
 
-    return dict(train_df = train_df,
-                test_df = test_df,
+    return dict(train_df = training_set,
+                test_df = testing_set,
                 dataset_total = dataset_total
     )
