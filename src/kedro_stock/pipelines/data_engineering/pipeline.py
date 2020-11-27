@@ -46,7 +46,8 @@ def create_pipeline(**kwargs):
                 dict(
                    train_df = "train_df",
                    test_df = "test_df",
-                   dataset_total = "dataset_total"
+                   dataset_total = "dataset_total",
+                   len_test= "len_test",
                 ),
             )
         ]

@@ -49,5 +49,6 @@ def split_data(traindata, testdata, split_ratio):
 
     return dict(train_df = training_set,
                 test_df = testing_set,
-                dataset_total = dataset_total
+                dataset_total = dataset_total,
+                len_test = len(test_df)
     )

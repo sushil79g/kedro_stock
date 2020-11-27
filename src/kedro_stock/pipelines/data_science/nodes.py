@@ -41,7 +41,11 @@ from numpy.core.fromnumeric import reshape
 import pandas as pd
 from pandas.io import feather_format
 
+import torch
+from torch.autograd import Variable
+
 from sklearn.preprocessing import MinMaxScaler
+from sklearn.metrics import r2_score, mean_squared_error
 
 from .model import train_mlmodel
 
@@ -57,7 +61,7 @@ def pre_process(training_df, parameters):
     x_train, y_train = np.array(x_train), np.array(y_train)
     x_train = np.reshape(x_train, (x_train.shape[0], 1, x_train.shape[1]))
     
-    return x_train, y_train
+    return x_train, y_train, sc
 
 
 
@@ -69,43 +73,49 @@ def train_model(
     conf/project/parameters.yml. All of the data as well as the parameters
     will be provided to this function at the time of execution.
     """
-    x_train, y_train = pre_process(training_df=train_x, parameters=parameters)
-    train_mlmodel(x_train, y_train, parameters)
-    print("waiting here")
-    import pdb; pdb.set_trace()
+    x_train, y_train, _ = pre_process(training_df=train_x, parameters=parameters)
+    mlmodel = train_mlmodel(x_train, y_train, parameters)
+    return mlmodel
     
     
 
 
-def predict(model: np.ndarray, test_x: pd.DataFrame) -> np.ndarray:
+def predict(mlmodel: np.ndarray, dataset_total, len_test, training_df,parameters) -> np.ndarray:
     """Node for making predictions given a pre-trained model and a test set.
     """
-    X = test_x.to_numpy()
+    inputs = dataset_total[len(dataset_total) - len_test - parameters['INPUT_SIZE']:].values
+    inputs = inputs.reshape(-1,1)
+    x_train, _, sc = pre_process(training_df, parameters)
+    inputs = sc.transform(inputs)
+    x_test = []
+    for i in range(parameters['INPUT_SIZE'], 80):
+        x_test.append(inputs[i-parameters["INPUT_SIZE"]:i, 0])
+    x_test = np.array(x_test)
+    x_test = np.reshape(x_test, (x_test.shape[0], 1, x_test.shape[1]))
+    
+    x_train_test = np.concatenate((x_train, x_test), axis=0)
+    hidden_state = None
+    test_input = Variable(torch.from_numpy(x_train_test).float())
+    predicted_stock_price, b = mlmodel(test_input, hidden_state)
+    predicted_stock_price = np.reshape(predicted_stock_price.detach().numpy(), (test_input.shape[0], 1))
+    predicted_stock_price = sc.inverse_transform(predicted_stock_price)
+    return predicted_stock_price
+    
 
-    # Add bias to the features
-    bias = np.ones((X.shape[0], 1))
-    X = np.concatenate((bias, X), axis=1)
 
-    # Predict "probabilities" for each class
-    result = _sigmoid(np.dot(X, model))
-
-    # Return the index of the class with max probability for all samples
-    return np.argmax(result, axis=1)
-
-
-def report_accuracy(predictions: np.ndarray, test_y: pd.DataFrame) -> None:
-    """Node for reporting the accuracy of the predictions performed by the
+def report_metrics(predicted_stock_price: np.ndarray, train_df, test_df, parameters) -> None:
+    """Node for reporting the metrices of the predictions performed by the
     previous node. Notice that this function has no outputs, except logging.
     """
-    # Get true class index
-    target = np.argmax(test_y.to_numpy(), axis=1)
-    # Calculate accuracy of predictions
-    accuracy = np.sum(predictions == target) / target.shape[0]
-    # Log the accuracy of the model
+    # train_df => training_set
+    # test_df = >real_stock_price
     log = logging.getLogger(__name__)
-    log.info("Model accuracy on test set: %0.2f%%", accuracy * 100)
+    log.info("started model evaluation")
+    real_price = np.concatenate((train_df[parameters['INPUT_SIZE']:], test_df))
+    r2_loss = r2_score(real_price, predicted_stock_price)
+    mse = mean_squared_error(real_price, predicted_stock_price)
+    print("R2 loss of model is", r2_loss)
+    print("mean squared error is", mse)
 
 
-def _sigmoid(z):
-    """A helper sigmoid function used by the training and the scoring nodes."""
-    return 1 / (1 + np.exp(-z))
+

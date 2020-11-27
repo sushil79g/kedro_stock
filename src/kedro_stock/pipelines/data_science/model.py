@@ -39,3 +39,5 @@ def train_mlmodel(x_train, y_train, parameters):
         optimizer.step()
 
         print('epoch{}, loss{}'.format(epoch, loss.item()))
+    
+    return rnn
