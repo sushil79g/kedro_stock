@@ -2,6 +2,10 @@ import torch
 import torch.nn as nn
 from torch.autograd import Variable
 
+
+import mlflow
+import mlflow.pytorch
+
 class RNN(nn.Module):
     def __init__(self, i_size, h_size, n_layers, o_size):
         super(RNN, self).__init__()
@@ -28,16 +32,20 @@ def train_mlmodel(x_train, y_train, parameters):
     criterion = nn.MSELoss()
     hidden_state = None
 
-    for epoch in range(parameters['num_epochs']):
-        inputs = Variable(torch.from_numpy(x_train).float())
-        labels = Variable(torch.from_numpy(y_train).float())
-        output, hidden_state = rnn(inputs, hidden_state)
-        loss = criterion(output.view(-1), labels)
-        optimizer.zero_grad()
-        # torch.autograd.set_detect_anomaly(True)
-        loss.backward(retain_graph=True)
-        optimizer.step()
+    with mlflow.start_run() as run:
+        for epoch in range(parameters['num_epochs']):
+            inputs = Variable(torch.from_numpy(x_train).float())
+            labels = Variable(torch.from_numpy(y_train).float())
+            output, hidden_state = rnn(inputs, hidden_state)
+            loss = criterion(output.view(-1), labels)
+            optimizer.zero_grad()
+            # torch.autograd.set_detect_anomaly(True)
+            loss.backward(retain_graph=True)
+            optimizer.step()
 
-        print('epoch{}, loss{}'.format(epoch, loss.item()))
+            print('epoch{}, loss{}'.format(epoch, loss.item()))
+            mlflow.log_metric("epoch "+ str(epoch), loss.item())
+        mlflow.log_param('loss_type', 'MSELoss')
+        mlflow.pytorch.log_model(rnn, 'model')
     
     return rnn

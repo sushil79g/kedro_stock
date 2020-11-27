@@ -44,6 +44,7 @@ from pandas.io import feather_format
 import torch
 from torch.autograd import Variable
 
+
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.metrics import r2_score, mean_squared_error
 
@@ -75,6 +76,9 @@ def train_model(
     """
     x_train, y_train, _ = pre_process(training_df=train_x, parameters=parameters)
     mlmodel = train_mlmodel(x_train, y_train, parameters)
+
+    
+
     return mlmodel
     
     
