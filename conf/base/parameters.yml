@@ -8,4 +8,4 @@ INPUT_SIZE: 60
 HIDDEN_SIZE: 64
 NUM_LAYERS: 2
 OUTPUT_SIZE: 1
-num_epochs: 50
+num_epochs: 4

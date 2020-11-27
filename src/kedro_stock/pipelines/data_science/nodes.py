@@ -71,6 +71,8 @@ def train_model(
     """
     x_train, y_train = pre_process(training_df=train_x, parameters=parameters)
     train_mlmodel(x_train, y_train, parameters)
+    print("waiting here")
+    import pdb; pdb.set_trace()
     
     
 
