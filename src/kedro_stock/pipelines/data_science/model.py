@@ -56,5 +56,5 @@ def train_mlmodel(x_train, y_train, parameters):
         mlflow.log_param('OUTPUT_SIZE', 1)
         mlflow.log_param('num_epochs', 4)
         mlflow.pytorch.log_model(rnn, 'model')
-    
+    mlflow.end_run()
     return rnn
