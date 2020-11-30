@@ -46,6 +46,14 @@ def train_mlmodel(x_train, y_train, parameters):
             print('epoch{}, loss{}'.format(epoch, loss.item()))
             mlflow.log_metric("epoch "+ str(epoch), loss.item())
         mlflow.log_param('loss_type', 'MSELoss')
+        mlflow.log_param('test_data_ratio', 0.2)
+        mlflow.log_param('num_train_iter', 10000)
+        mlflow.log_param('learning_rate', 0.0001)
+        mlflow.log_param('INPUT_SIZE', 60)
+        mlflow.log_param('HIDDEN_SIZE', 64)
+        mlflow.log_param('NUM_LAYERS', 3)
+        mlflow.log_param('OUTPUT_SIZE', 1)
+        mlflow.log_param('num_epochs', 4)
         mlflow.pytorch.log_model(rnn, 'model')
     
     return rnn
