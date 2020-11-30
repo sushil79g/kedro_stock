@@ -32,7 +32,8 @@ def train_mlmodel(x_train, y_train, parameters):
     criterion = nn.MSELoss()
     hidden_state = None
 
-    with mlflow.start_run() as run:
+    mlflow.set_experiment(parameters['EXP_NAME'])
+    with mlflow.start_run(run_name=parameters['RUN_NAME']) as run:
         for epoch in range(parameters['num_epochs']):
             inputs = Variable(torch.from_numpy(x_train).float())
             labels = Variable(torch.from_numpy(y_train).float())
@@ -46,6 +47,14 @@ def train_mlmodel(x_train, y_train, parameters):
             print('epoch{}, loss{}'.format(epoch, loss.item()))
             mlflow.log_metric("epoch "+ str(epoch), loss.item())
         mlflow.log_param('loss_type', 'MSELoss')
+        mlflow.log_param('test_data_ratio', parameters['test_data_ratio'])
+        mlflow.log_param('num_train_iter', parameters['num_train_iter'])
+        mlflow.log_param('learning_rate', parameters['learning_rate'])
+        mlflow.log_param('INPUT_SIZE', parameters['INPUT_SIZE'])
+        mlflow.log_param('HIDDEN_SIZE', parameters['HIDDEN_SIZE'])
+        mlflow.log_param('NUM_LAYERS', parameters['NUM_LAYERS'])
+        mlflow.log_param('OUTPUT_SIZE', parameters['OUTPUT_SIZE'])
+        mlflow.log_param('num_epochs', parameters['num_epochs'])
         mlflow.pytorch.log_model(rnn, 'model')
-    
+    mlflow.end_run()
     return rnn
