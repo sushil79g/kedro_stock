@@ -32,7 +32,8 @@ def train_mlmodel(x_train, y_train, parameters):
     criterion = nn.MSELoss()
     hidden_state = None
 
-    with mlflow.start_run() as run:
+    mlflow.set_experiment(parameters['EXP_NAME'])
+    with mlflow.start_run(run_name=parameters['RUN_NAME']) as run:
         for epoch in range(parameters['num_epochs']):
             inputs = Variable(torch.from_numpy(x_train).float())
             labels = Variable(torch.from_numpy(y_train).float())
